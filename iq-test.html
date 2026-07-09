@@ -61,7 +61,7 @@
 </footer>
 
 <script>
-const questions = [
+const questionPool = [
   { q: "次の数列の続きは？ 2, 4, 8, 16, ?", choices: ["18", "24", "32", "20"], correct: 2 },
   { q: "「猫」と「魚」の関係は、「犬」と次のどれに近い？", choices: ["骨", "花", "車", "空"], correct: 0 },
   { q: "次のうち仲間はずれはどれ？", choices: ["三角形", "四角形", "円", "赤色"], correct: 3 },
@@ -71,8 +71,33 @@ const questions = [
   { q: "1個100円のりんごを3個と、1個150円の梨を2個買った。合計金額は？", choices: ["500円", "600円", "650円", "700円"], correct: 2 },
   { q: "次の文字列の規則性：AZ BY CX の次は？", choices: ["DW", "DE", "EW", "DX"], correct: 0 },
   { q: "5人でじゃんけんをして1人が勝った。負けた人は何人？", choices: ["3人", "4人", "5人", "2人"], correct: 1 },
-  { q: "時計の針が3時を指すとき、短針と長針の間の角度は？", choices: ["45度", "60度", "90度", "120度"], correct: 2 }
+  { q: "時計の針が3時を指すとき、短針と長針の間の角度は？", choices: ["45度", "60度", "90度", "120度"], correct: 2 },
+  { q: "次の数列の続きは？ 3, 6, 11, 18, 27, ?", choices: ["36", "38", "40", "35"], correct: 1 },
+  { q: "次の数列の続きは？ 1, 1, 2, 3, 5, 8, ?", choices: ["11", "12", "13", "14"], correct: 2 },
+  { q: "「すべてのAはBである。すべてのBはCである。」このときAとCの関係は？", choices: ["すべてのAはCである", "一部のAはCである", "AとCは無関係", "CはAではない"], correct: 0 },
+  { q: "サイコロを2回振って、出た目の合計が7になる確率は？", choices: ["1/6", "1/9", "1/12", "1/8"], correct: 0 },
+  { q: "次の規則性：A1 C3 E5 G7 の次は？", choices: ["I9", "H8", "I8", "J9"], correct: 0 },
+  { q: "鏡に映った時計の文字盤で「3時」はどう見える？", choices: ["9時", "3時", "6時", "12時"], correct: 0 },
+  { q: "今年、父は42歳、子は12歳。父の年齢がちょうど子の年齢の3倍になるのは何年後？", choices: ["2年後", "3年後", "4年後", "5年後"], correct: 1 },
+  { q: "次の数列の続きは？ 2, 6, 18, 54, ?", choices: ["108", "162", "180", "216"], correct: 1 },
+  { q: "「医者」と「病院」の関係は、「教師」と次のどれに近い？", choices: ["学校", "生徒", "黒板", "授業"], correct: 0 },
+  { q: "次のうち、他と性質が異なる数はどれ？", choices: ["7", "9", "11", "13"], correct: 1 }
 ];
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+const questions = shuffle(questionPool).slice(0, 10).map(item => {
+  const correctText = item.choices[item.correct];
+  const shuffledChoices = shuffle(item.choices);
+  return { q: item.q, choices: shuffledChoices, correct: shuffledChoices.indexOf(correctText) };
+});
 
 let current = 0;
 let answers = new Array(questions.length).fill(null);
