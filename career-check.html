@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>転職適性診断｜今の転職"温度感"がわかる8問</title>
+<meta name="description" content="8つの質問で今の転職モチベーションを診断。あなたに合った次の一歩がわかります。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <a class="logo" href="index.html">みんなの<span>診断</span>ラボ</a>
+</header>
+
+<div class="wrap">
+  <div id="quiz-view">
+    <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="q-count" id="q-count">質問 1 / 8</div>
+    <div class="question">
+      <h2 id="q-text"></h2>
+      <div class="choices" id="choices"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="back-btn">戻る</button>
+      <button class="btn btn-primary" id="next-btn" disabled>次へ</button>
+    </div>
+  </div>
+
+  <div id="result-view" style="display:none;">
+    <div class="result-card">
+      <div class="label" id="result-label"></div>
+      <div class="score" id="result-score"></div>
+      <div class="desc" id="result-desc"></div>
+    </div>
+
+    <div class="cta-box" id="cta-high">
+      <h3>🚀 今のあなたにおすすめの一歩</h3>
+      <p>転職市場は情報戦。まずは無料の転職エージェントに登録して、今の市場価値を知ることから始めてみませんか？相談だけでもOKです。</p>
+      <a class="btn btn-primary" style="width:100%; display:block; margin-bottom:10px;" href="https://example.com/affiliate?aid=CAREER_RECRUIT" target="_blank" rel="noopener sponsored">リクルートエージェント（無料）</a>
+      <a class="btn btn-secondary" style="width:100%; display:block;" href="https://example.com/affiliate?aid=CAREER_DODA" target="_blank" rel="noopener sponsored">doda に登録する（無料）</a>
+    </div>
+
+    <div class="cta-box">
+      <h3>🔮 自分の性格タイプも知りたい人へ</h3>
+      <p>あなたの隠れた性格タイプと恋愛運も診断できます。</p>
+      <a class="btn btn-secondary" style="width:100%; display:block;" href="uranai.html">恋愛運・性格占いをやってみる</a>
+    </div>
+
+    <div class="share-row">
+      <a href="#" id="share-x">Xでシェア</a>
+      <a href="#" id="share-line">LINEでシェア</a>
+    </div>
+
+    <a class="retry-link" href="career-check.html">もう一度診断する</a>
+  </div>
+
+  <p class="disclosure">本診断はエンタメ・参考目的の簡易版です。ページ内の一部リンクは広告（アフィリエイトリンク）を含みます。</p>
+</div>
+
+<footer class="site">
+  <p>© 2026 みんなの診断ラボ｜<a href="index.html">トップに戻る</a></p>
+</footer>
+
+<script>
+const questions = [
+  { q: "今の仕事にやりがいを感じますか？", choices: ["とても感じる", "まあまあ感じる", "あまり感じない", "全く感じない"], points: [0, 1, 2, 3] },
+  { q: "今の給与に満足していますか？", choices: ["満足している", "やや満足", "やや不満", "不満"], points: [0, 1, 2, 3] },
+  { q: "職場の人間関係にストレスを感じますか？", choices: ["全く感じない", "たまに感じる", "よく感じる", "常に感じる"], points: [0, 1, 2, 3] },
+  { q: "今の会社での将来のキャリアパスは見えていますか？", choices: ["はっきり見えている", "なんとなく見えている", "あまり見えない", "全く見えない"], points: [0, 1, 2, 3] },
+  { q: "残業や労働時間に不満はありますか？", choices: ["全くない", "少しある", "かなりある", "限界に近い"], points: [0, 1, 2, 3] },
+  { q: "今の会社で成長できている実感はありますか？", choices: ["強く感じる", "多少感じる", "あまりない", "全くない"], points: [0, 1, 2, 3] },
+  { q: "最近、転職を考えたことがありますか？", choices: ["全くない", "たまに考える", "よく考える", "ほぼ毎日考える"], points: [0, 1, 2, 3] },
+  { q: "5年後も今の会社にいたいと思いますか？", choices: ["強くそう思う", "まあまあ思う", "あまり思わない", "全く思わない"], points: [0, 1, 2, 3] }
+];
+
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+const qText = document.getElementById('q-text');
+const choicesEl = document.getElementById('choices');
+const qCount = document.getElementById('q-count');
+const progressBar = document.getElementById('progress-bar');
+const nextBtn = document.getElementById('next-btn');
+const backBtn = document.getElementById('back-btn');
+
+function render() {
+  const item = questions[current];
+  qText.textContent = `Q${current + 1}. ${item.q}`;
+  qCount.textContent = `質問 ${current + 1} / ${questions.length}`;
+  progressBar.style.width = `${((current) / questions.length) * 100}%`;
+  choicesEl.innerHTML = '';
+  item.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn' + (answers[current] === i ? ' selected' : '');
+    btn.textContent = c;
+    btn.onclick = () => {
+      answers[current] = i;
+      render();
+    };
+    choicesEl.appendChild(btn);
+  });
+  nextBtn.disabled = answers[current] === null;
+  nextBtn.textContent = current === questions.length - 1 ? '結果を見る' : '次へ';
+  backBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
+}
+
+backBtn.onclick = () => {
+  if (current > 0) { current--; render(); }
+};
+
+nextBtn.onclick = () => {
+  if (current < questions.length - 1) {
+    current++;
+    render();
+  } else {
+    showResult();
+  }
+};
+
+function showResult() {
+  const total = answers.reduce((acc, a, i) => acc + questions[i].points[a], 0);
+  const max = questions.length * 3;
+
+  let label, desc;
+  if (total >= 18) {
+    label = '🔥 今すぐ動くべきタイプ';
+    desc = '転職への気持ちがかなり高まっています。情報収集だけでも早めに始めるのがおすすめです。';
+  } else if (total >= 12) {
+    label = '🧭 転職検討タイプ';
+    desc = 'モヤモヤを抱えつつ様子を見ている段階。まずは市場価値を知るだけでも視野が広がります。';
+  } else if (total >= 6) {
+    label = '🌤 様子見タイプ';
+    desc = '今すぐではないけれど、小さな不満は感じている状態。情報だけ集めておくと安心です。';
+  } else {
+    label = '🌱 今のままで満足タイプ';
+    desc = '今の環境に比較的満足している様子。無理に動く必要はなさそうです。';
+  }
+
+  document.getElementById('result-label').textContent = label;
+  document.getElementById('result-score').textContent = `${total} / ${max}`;
+  document.getElementById('result-desc').textContent = desc;
+
+  document.getElementById('quiz-view').style.display = 'none';
+  document.getElementById('result-view').style.display = 'block';
+
+  const shareText = encodeURIComponent(`【転職適性診断】私の転職温度感は「${label}」でした。あなたは？`);
+  const shareUrl = encodeURIComponent(location.href);
+  document.getElementById('share-x').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+  document.getElementById('share-line').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
+}
+
+render();
+</script>
+</body>
+</html>

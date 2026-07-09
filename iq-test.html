@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>簡易IQテスト｜1分で思考タイプ診断</title>
+<meta name="description" content="10問のミニ問題で思考タイプを診断する簡易IQテスト。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <a class="logo" href="index.html">みんなの<span>診断</span>ラボ</a>
+</header>
+
+<div class="wrap">
+  <div id="quiz-view">
+    <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="q-count" id="q-count">質問 1 / 10</div>
+    <div class="question">
+      <h2 id="q-text"></h2>
+      <div class="choices" id="choices"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="back-btn">戻る</button>
+      <button class="btn btn-primary" id="next-btn" disabled>次へ</button>
+    </div>
+  </div>
+
+  <div id="result-view" style="display:none;">
+    <div class="result-card">
+      <div class="label" id="result-label"></div>
+      <div class="score" id="result-score"></div>
+      <div class="desc" id="result-desc"></div>
+    </div>
+
+    <div class="cta-box">
+      <h3>🧠 診断結果を見て、頭の使い方を変えてみる？</h3>
+      <p>今のあなたの思考力を活かせる仕事、意外と見つかるかもしれません。1分の転職適性診断もどうぞ。</p>
+      <a class="btn btn-primary" href="career-check.html" style="width:100%;">転職適性診断をやってみる</a>
+    </div>
+
+    <div class="cta-box">
+      <h3>📚 もっと脳を鍛えたい人へ</h3>
+      <p>すきま時間の脳トレ・学習アプリで、思考力をコツコツ伸ばせます。</p>
+      <a class="btn btn-secondary" style="width:100%; display:block;" href="https://example.com/affiliate?aid=IQ_BRAINAPP" target="_blank" rel="noopener sponsored">おすすめアプリを見る（広告）</a>
+    </div>
+
+    <div class="share-row">
+      <a href="#" id="share-x">Xでシェア</a>
+      <a href="#" id="share-line">LINEでシェア</a>
+    </div>
+
+    <a class="retry-link" href="iq-test.html">もう一度診断する</a>
+  </div>
+
+  <p class="disclosure">本診断はエンタメ目的の簡易版であり、公式の知能検査ではありません。一部リンクは広告を含みます。</p>
+</div>
+
+<footer class="site">
+  <p>© 2026 みんなの診断ラボ｜<a href="index.html">トップに戻る</a></p>
+</footer>
+
+<script>
+const questions = [
+  { q: "次の数列の続きは？ 2, 4, 8, 16, ?", choices: ["18", "24", "32", "20"], correct: 2 },
+  { q: "「猫」と「魚」の関係は、「犬」と次のどれに近い？", choices: ["骨", "花", "車", "空"], correct: 0 },
+  { q: "次のうち仲間はずれはどれ？", choices: ["三角形", "四角形", "円", "赤色"], correct: 3 },
+  { q: "Aは B より背が高い。B は C より背が高い。一番背が低いのは？", choices: ["A", "B", "C", "わからない"], correct: 2 },
+  { q: "次の図形パターン ○△○△○ の次にくるのは？", choices: ["○", "△", "□", "×"], correct: 1 },
+  { q: "「明るい」の反対の意味は？", choices: ["静か", "暗い", "速い", "重い"], correct: 1 },
+  { q: "1個100円のりんごを3個と、1個150円の梨を2個買った。合計金額は？", choices: ["500円", "600円", "650円", "700円"], correct: 2 },
+  { q: "次の文字列の規則性：AZ BY CX の次は？", choices: ["DW", "DE", "EW", "DX"], correct: 0 },
+  { q: "5人でじゃんけんをして1人が勝った。負けた人は何人？", choices: ["3人", "4人", "5人", "2人"], correct: 1 },
+  { q: "時計の針が3時を指すとき、短針と長針の間の角度は？", choices: ["45度", "60度", "90度", "120度"], correct: 2 }
+];
+
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+const qText = document.getElementById('q-text');
+const choicesEl = document.getElementById('choices');
+const qCount = document.getElementById('q-count');
+const progressBar = document.getElementById('progress-bar');
+const nextBtn = document.getElementById('next-btn');
+const backBtn = document.getElementById('back-btn');
+
+function render() {
+  const item = questions[current];
+  qText.textContent = `Q${current + 1}. ${item.q}`;
+  qCount.textContent = `質問 ${current + 1} / ${questions.length}`;
+  progressBar.style.width = `${((current) / questions.length) * 100}%`;
+  choicesEl.innerHTML = '';
+  item.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn' + (answers[current] === i ? ' selected' : '');
+    btn.textContent = c;
+    btn.onclick = () => {
+      answers[current] = i;
+      render();
+    };
+    choicesEl.appendChild(btn);
+  });
+  nextBtn.disabled = answers[current] === null;
+  nextBtn.textContent = current === questions.length - 1 ? '結果を見る' : '次へ';
+  backBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
+}
+
+backBtn.onclick = () => {
+  if (current > 0) { current--; render(); }
+};
+
+nextBtn.onclick = () => {
+  if (current < questions.length - 1) {
+    current++;
+    render();
+  } else {
+    showResult();
+  }
+};
+
+function showResult() {
+  const correctCount = answers.reduce((acc, a, i) => acc + (a === questions[i].correct ? 1 : 0), 0);
+  const score = 85 + correctCount * 5;
+
+  let label, desc;
+  if (score >= 130) {
+    label = '🌟 天才ひらめきタイプ';
+    desc = '論理的思考も直感も高いレベル。難しい問題ほど燃えるタイプです。今の環境で力を持て余していませんか？';
+  } else if (score >= 115) {
+    label = '🔎 優秀な分析タイプ';
+    desc = '筋道立てて考えるのが得意。冷静な判断力を活かせる場面できっと重宝されます。';
+  } else if (score >= 100) {
+    label = '⚖️ バランス思考タイプ';
+    desc = '極端に偏らず、状況に応じて柔軟に考えられるタイプ。安定感のある思考力の持ち主です。';
+  } else {
+    label = '💛 マイペース直感タイプ';
+    desc = '細かい理屈より感覚やひらめきを大事にするタイプ。発想力や人当たりの良さが強みです。';
+  }
+
+  document.getElementById('result-label').textContent = label;
+  document.getElementById('result-score').textContent = score;
+  document.getElementById('result-desc').textContent = `${correctCount}/10問正解 ｜ ${desc}`;
+
+  document.getElementById('quiz-view').style.display = 'none';
+  document.getElementById('result-view').style.display = 'block';
+
+  const shareText = encodeURIComponent(`【簡易IQテスト】私のスコアは${score}でした！あなたは何点？`);
+  const shareUrl = encodeURIComponent(location.href);
+  document.getElementById('share-x').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+  document.getElementById('share-line').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
+}
+
+render();
+</script>
+</body>
+</html>
