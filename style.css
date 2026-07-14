@@ -100,6 +100,8 @@ header.site a.logo span { color: var(--accent); }
 .diag-card.iq { border-color: rgba(124,108,246,0.35); }
 .diag-card.career { border-color: rgba(92,214,192,0.35); }
 .diag-card.uranai { border-color: rgba(246,163,92,0.35); }
+.diag-card.kintore { border-color: rgba(230,90,90,0.35); }
+.diag-card.kokkaku { border-color: rgba(200,140,220,0.35); }
 
 .progress {
   height: 6px;

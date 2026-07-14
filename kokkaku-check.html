@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>骨格タイプ診断｜あなたに似合う服がわかる8問</title>
+<meta name="description" content="8つの質問であなたの骨格タイプ（ストレート・ウェーブ・ナチュラル）を診断。似合うファッションの傾向がわかります。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site">
+  <a class="logo" href="index.html">みんなの<span>診断</span>ラボ</a>
+</header>
+
+<div class="wrap">
+  <div id="quiz-view">
+    <div class="progress"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="q-count" id="q-count">質問 1 / 8</div>
+    <div class="question">
+      <h2 id="q-text"></h2>
+      <div class="choices" id="choices"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn btn-secondary" id="back-btn">戻る</button>
+      <button class="btn btn-primary" id="next-btn" disabled>次へ</button>
+    </div>
+  </div>
+
+  <div id="result-view" style="display:none;">
+    <div class="result-card">
+      <div class="label" id="result-label"></div>
+      <div class="score" id="result-score"></div>
+      <div class="desc" id="result-desc"></div>
+    </div>
+
+    <div class="cta-box" id="cta-high">
+      <h3>👗 あなたの骨格タイプに似合うアイテム</h3>
+      <p id="cta-desc">タイプに合った服選びで、着痩せや垢抜けを狙いやすくなります。</p>
+      <a class="btn btn-primary" style="width:100%; display:block;" href="https://example.com/affiliate?aid=RAKUTEN_KOKKAKU" target="_blank" rel="noopener sponsored">楽天でおすすめアイテムを見る（広告）</a>
+    </div>
+
+    <div class="cta-box">
+      <h3>💪 体型づくりも気になる方へ</h3>
+      <p>骨格に合った体のラインづくりには、筋トレの習慣も関係してきます。</p>
+      <a class="btn btn-secondary" style="width:100%; display:block;" href="kintore-check.html">筋トレタイプ診断をやってみる</a>
+    </div>
+
+    <div class="cta-box">
+      <h3>🔮 印象診断もあわせてどうぞ</h3>
+      <p>見た目だけでなく、内面の性格タイプや恋愛運も診断できます。</p>
+      <a class="btn btn-secondary" style="width:100%; display:block;" href="https://aiueo381654729-hub.github.io/uranai-shindan/">恋愛運・性格占いをやってみる</a>
+    </div>
+
+    <div class="share-row">
+      <a href="#" id="share-x">Xでシェア</a>
+      <a href="#" id="share-line">LINEでシェア</a>
+    </div>
+
+    <a class="retry-link" href="kokkaku-check.html">もう一度診断する</a>
+  </div>
+
+  <p class="disclosure">本診断はエンタメ・参考目的の簡易版であり、専門的な骨格診断を代替するものではありません。ページ内の一部リンクは広告（アフィリエイトリンク）を含みます。</p>
+</div>
+
+<footer class="site">
+  <p>© 2026 みんなの診断ラボ｜<a href="index.html">トップに戻る</a>｜<a href="about.html">運営者情報</a>｜<a href="contact.html">お問い合わせ</a>｜<a href="privacy.html">プライバシーポリシー</a></p>
+</footer>
+
+<script>
+const questions = [
+  { q: "肌の質感に近いのは？", choices: ["ハリと弾力がある", "なめらかで薄い印象", "マットでしっかりしている"] },
+  { q: "手首や指の骨格は？", choices: ["しっかりめで関節が目立たない", "華奢で関節が目立つ", "骨や関節がしっかり大きい"] },
+  { q: "鎖骨・デコルテの印象は？", choices: ["厚みがあり目立ちにくい", "華奢で鎖骨が目立つ", "しっかりして骨っぽい印象"] },
+  { q: "体型の変化として起きやすいのは？", choices: ["上半身にボリュームが出やすい", "下半身にボリュームが出やすい", "全体的にしっかりした印象になりやすい"] },
+  { q: "よく言われる第一印象は？", choices: ["かっこいい・シャープ", "かわいい・華奢", "クール・こなれた印象"] },
+  { q: "似合う服のテイストとして選ぶなら？", choices: ["シンプルでベーシックなもの", "フェミニンで装飾のあるもの", "ラフで素材感のあるもの"] },
+  { q: "アクセサリーを選ぶなら？", choices: ["直線的でシャープなデザイン", "小ぶりで華奢なデザイン", "個性的で存在感のある大ぶりなデザイン"] },
+  { q: "洋服のサイズ感で迷ったら？", choices: ["ジャストサイズがしっくりくる", "コンパクトめが好き", "ゆったりめも着こなせる"] }
+];
+
+let current = 0;
+let answers = new Array(questions.length).fill(null);
+
+const qText = document.getElementById('q-text');
+const choicesEl = document.getElementById('choices');
+const qCount = document.getElementById('q-count');
+const progressBar = document.getElementById('progress-bar');
+const nextBtn = document.getElementById('next-btn');
+const backBtn = document.getElementById('back-btn');
+
+function render() {
+  const item = questions[current];
+  qText.textContent = `Q${current + 1}. ${item.q}`;
+  qCount.textContent = `質問 ${current + 1} / ${questions.length}`;
+  progressBar.style.width = `${((current) / questions.length) * 100}%`;
+  choicesEl.innerHTML = '';
+  item.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn' + (answers[current] === i ? ' selected' : '');
+    btn.textContent = c;
+    btn.onclick = () => {
+      answers[current] = i;
+      render();
+    };
+    choicesEl.appendChild(btn);
+  });
+  nextBtn.disabled = answers[current] === null;
+  nextBtn.textContent = current === questions.length - 1 ? '結果を見る' : '次へ';
+  backBtn.style.visibility = current === 0 ? 'hidden' : 'visible';
+}
+
+backBtn.onclick = () => {
+  if (current > 0) { current--; render(); }
+};
+
+nextBtn.onclick = () => {
+  if (current < questions.length - 1) {
+    current++;
+    render();
+  } else {
+    showResult();
+  }
+};
+
+function showResult() {
+  const tally = [0, 0, 0];
+  answers.forEach(a => tally[a]++);
+  const maxVotes = Math.max(...tally);
+  const typeIndex = tally.indexOf(maxVotes);
+
+  const types = [
+    {
+      label: "🟦 ストレート型",
+      desc: "ハリと厚みのある体のラインが特徴。シンプルでベーシックなIラインシルエットが得意なタイプです。",
+      cta: "ジャストサイズのベーシックアイテムが似合いやすいタイプです。"
+    },
+    {
+      label: "🟪 ウェーブ型",
+      desc: "華奢で曲線的なラインが特徴。フェミニンで装飾のあるアイテムが得意なタイプです。",
+      cta: "コンパクトで華奢見えするフェミニンなアイテムが似合いやすいタイプです。"
+    },
+    {
+      label: "🟩 ナチュラル型",
+      desc: "骨格やフレームがしっかりしていて、こなれ感のあるラフなスタイルが得意なタイプです。",
+      cta: "オーバーサイズや素材感のあるラフなアイテムが似合いやすいタイプです。"
+    }
+  ];
+
+  const result = types[typeIndex];
+
+  document.getElementById('result-label').textContent = result.label;
+  document.getElementById('result-score').textContent = `${maxVotes} / ${questions.length}問が一致`;
+  document.getElementById('result-desc').textContent = result.desc;
+  document.getElementById('cta-desc').textContent = result.cta;
+
+  document.getElementById('quiz-view').style.display = 'none';
+  document.getElementById('result-view').style.display = 'block';
+
+  const shareText = encodeURIComponent(`【骨格タイプ診断】私は「${result.label}」でした。あなたは？`);
+  const shareUrl = encodeURIComponent(location.href);
+  document.getElementById('share-x').href = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+  document.getElementById('share-line').href = `https://social-plugins.line.me/lineit/share?url=${shareUrl}&text=${shareText}`;
+}
+
+render();
+</script>
+</body>
+</html>
